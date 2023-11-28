@@ -218,23 +218,33 @@ class Node {
     return false;
   }
 
-  [[nodiscard]] std::list<Point> findPointsInArea(
-      const Rectangle& aArea) const {
-    // std::cout << "Find in " << aArea << '\n';
+  [[nodiscard]] std::list<Point> findPointsInArea(const Rectangle& aArea,
+                                                  uint aSearchDepth = 0) const {
+    std::cout << "Find in " << aArea << " at depth " << aSearchDepth << '\n';
 
     std::list<Point> result;
 
-    if (aArea.isPointInside(mPoint)) {
+    if (!mIsdeleted && aArea.isPointInside(mPoint)) {
       result.push_back(mPoint);
     }
 
     // Search children
     // TODO: Parallelization point
-    // if (mPoint.x <= aArea.Xmax() && mPoint.y <= aArea.Ymax() && mTopRight) {
-    //   // std::cout << "Search Area TopRight\n";
-    //   auto&& pointsFoundInArea = mTopRight->findPointsInArea(aArea);
-    //   result.splice(std::end(result), pointsFoundInArea);
-    // }
+    uint aCurrentDimension = aSearchDepth % 2;
+
+    if (mPoint[aCurrentDimension] > aArea.Min(aCurrentDimension) && mLeft) {
+      std::cout << "Search Area Left\n";
+      auto&& pointsFoundInArea =
+          mLeft->findPointsInArea(aArea, aSearchDepth + 1);
+      result.splice(std::end(result), pointsFoundInArea);
+    }
+
+    if (mPoint[aCurrentDimension] < aArea.Max(aCurrentDimension) && mRight) {
+      std::cout << "Search Area Right\n";
+      auto&& pointsFoundInArea =
+          mRight->findPointsInArea(aArea, aSearchDepth + 1);
+      result.splice(std::end(result), pointsFoundInArea);
+    }
 
     return result;
   }
