@@ -102,7 +102,7 @@ struct Rectangle {
 
   [[nodiscard]] float Ymax() const { return mYmax; }
 
-  float Max(uint aCurrentDimension) const {
+  [[nodiscard]] float Max(uint aCurrentDimension) const {
     switch (aCurrentDimension % 2) {
       case 0:
         return mXmax;
@@ -114,7 +114,7 @@ struct Rectangle {
     return NAN;
   }
 
-  float Min(uint aCurrentDimension) const {
+  [[nodiscard]] float Min(uint aCurrentDimension) const {
     switch (aCurrentDimension % 2) {
       case 0:
         return mXmin;
@@ -310,8 +310,6 @@ class Node {
     }
 
     // Search children
-    uint aCurrentDimension = aSearchDepth % 2;
-
     // TODO: Parallelization point
     if (mLeft) {
       // std::cout << "Search Area Left\n";
