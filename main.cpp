@@ -22,7 +22,7 @@ constexpr float kYmax = 1.0;
 constexpr float kMinDistanceX = 1e-5;
 constexpr float kMinDistanceY = 1e-5;
 
-constexpr int kPointsNumber = 10;  // 0000;
+constexpr int kPointsNumber = 100000;
 
 class TimeBench {
  public:
@@ -148,16 +148,17 @@ class Node {
   }
 
   bool insertPoint(const Point& aPoint, uint aInsertionDepth = 0) {
-    std::cout << "Insert " << aPoint << " at depth " << aInsertionDepth << '\n';
+    // std::cout << "Insert " << aPoint << " at depth " << aInsertionDepth <<
+    // '\n';
 
     // Check if point is previously inserted
     if (aPoint == mPoint) {
       if (mIsdeleted) {
-        std::cout << "Restore deleted point\n";
+        // std::cout << "Restore deleted point\n";
         mIsdeleted = false;
         return true;
       }
-      std::cout << "Point already exists!\n";
+      // std::cout << "Point already exists!\n";
       return false;
     }
 
@@ -166,7 +167,7 @@ class Node {
     uint aCurrentDimension = aInsertionDepth % 2;
 
     if (aPoint[aCurrentDimension] < mPoint[aCurrentDimension]) {
-      std::cout << "Insert Left\n";
+      // std::cout << "Insert Left\n";
       if (mLeft) {
         isInserted = mLeft->insertPoint(aPoint, aInsertionDepth + 1);
       } else {
@@ -174,7 +175,7 @@ class Node {
         isInserted = static_cast<bool>(mLeft);
       }
     } else {
-      std::cout << "Insert Right\n";
+      // std::cout << "Insert Right\n";
       if (mRight) {
         isInserted = mRight->insertPoint(aPoint, aInsertionDepth + 1);
       } else {
@@ -191,11 +192,11 @@ class Node {
   }
 
   bool findPoint(const Point& aPoint, uint aSearchDepth = 0) {
-    std::cout << "Find " << aPoint << " at depth " << aSearchDepth << '\n';
+    // std::cout << "Find " << aPoint << " at depth " << aSearchDepth << '\n';
 
     // Check if Node point found is close enough
     if (mPoint == aPoint && !mIsdeleted) {
-      std::cout << "Found\n";
+      // std::cout << "Found\n";
       return true;
     }
 
@@ -203,24 +204,24 @@ class Node {
     uint aCurrentDimension = aSearchDepth % 2;
 
     if (aPoint[aCurrentDimension] < mPoint[aCurrentDimension]) {
-      std::cout << "Find Left\n";
+      // std::cout << "Find Left\n";
       if (mLeft) {
         return mLeft->findPoint(aPoint, aSearchDepth + 1);
       }
     } else {
-      std::cout << "Find Right\n";
+      // std::cout << "Find Right\n";
       if (mRight) {
         return mRight->findPoint(aPoint, aSearchDepth + 1);
       }
     }
 
-    std::cout << "Not Found\n";
+    // std::cout << "Not Found\n";
     return false;
   }
 
   [[nodiscard]] std::list<Point> findPointsInArea(const Rectangle& aArea,
                                                   uint aSearchDepth = 0) const {
-    std::cout << "Find in " << aArea << " at depth " << aSearchDepth << '\n';
+    // std::cout << "Find in " << aArea << " at depth " << aSearchDepth << '\n';
 
     std::list<Point> result;
 
@@ -233,14 +234,14 @@ class Node {
     uint aCurrentDimension = aSearchDepth % 2;
 
     if (mPoint[aCurrentDimension] > aArea.Min(aCurrentDimension) && mLeft) {
-      std::cout << "Search Area Left\n";
+      // std::cout << "Search Area Left\n";
       auto&& pointsFoundInArea =
           mLeft->findPointsInArea(aArea, aSearchDepth + 1);
       result.splice(std::end(result), pointsFoundInArea);
     }
 
     if (mPoint[aCurrentDimension] < aArea.Max(aCurrentDimension) && mRight) {
-      std::cout << "Search Area Right\n";
+      // std::cout << "Search Area Right\n";
       auto&& pointsFoundInArea =
           mRight->findPointsInArea(aArea, aSearchDepth + 1);
       result.splice(std::end(result), pointsFoundInArea);
@@ -250,7 +251,7 @@ class Node {
   }
 
   bool deletePoint(const Point& aPoint, uint aDeleteDepth = 0) {
-    std::cout << "Delete " << aPoint << " at depth " << aDeleteDepth << '\n';
+    // std::cout << "Delete " << aPoint << " at depth " << aDeleteDepth << '\n';
 
     // Check if Node point to delete is close enough
     if (!mIsdeleted && mPoint == aPoint) {
@@ -259,9 +260,9 @@ class Node {
       const auto largestDepth = std::max({getDepth(mLeft), getDepth(mRight)});
       mDepth = largestDepth;
 
-      std::cout << (mDepth ? "Deleted current node"
-                           : "Current node invalidated")
-                << '\n';
+      // std::cout << (mDepth ? "Deleted current node"
+      //                      : "Current node invalidated")
+      //           << '\n';
 
       return true;
     }
@@ -270,7 +271,7 @@ class Node {
     uint aCurrentDimension = aDeleteDepth % 2;
 
     if (aPoint[aCurrentDimension] < mPoint[aCurrentDimension]) {
-      std::cout << "Delete Left\n";
+      // std::cout << "Delete Left\n";
       if (mLeft) {
         const auto isDeleted = mLeft->deletePoint(aPoint, aDeleteDepth + 1);
         if (mLeft->isEmpty()) {
@@ -282,7 +283,7 @@ class Node {
         return isDeleted;
       }
     } else {
-      std::cout << "Delete Right\n";
+      // std::cout << "Delete Right\n";
       if (mRight) {
         const auto isDeleted = mRight->deletePoint(aPoint, aDeleteDepth + 1);
         if (mRight->isEmpty()) {
@@ -295,7 +296,7 @@ class Node {
       }
     }
 
-    std::cout << "Point " << aPoint << " not deleted\n";
+    // std::cout << "Point " << aPoint << " not deleted\n";
     return false;
   }
 
@@ -313,13 +314,13 @@ class Node {
 
     // TODO: Parallelization point
     if (mLeft) {
-      std::cout << "Search Area Left\n";
+      // std::cout << "Search Area Left\n";
       auto&& pointsFound = mLeft->getAllPoints(aSearchDepth + 1);
       points.splice(std::end(points), pointsFound);
     }
 
     if (mRight) {
-      std::cout << "Search Area Right\n";
+      // std::cout << "Search Area Right\n";
       auto&& pointsFound = mRight->getAllPoints(aSearchDepth + 1);
       points.splice(std::end(points), pointsFound);
     }
@@ -440,13 +441,13 @@ int main(int /*argc*/, char* /*argv*/[]) {
   {
     TimeBench bench{"Find points in KDTree"};
     for (const auto& point : testPoints) {
-      std::cout << "=====\n";
+      // std::cout << "=====\n";
       const auto isPointFound = root->findPoint(point);
-      std::cout << "Find point: " << isPointFound << '\n';
+      // std::cout << "Find point: " << isPointFound << '\n';
       if (isPointFound) {
         pointsFound++;
       }
-      std::cout << "=====\n";
+      // std::cout << "=====\n";
     }
   }
   if (pointsFound != testPoints.size()) {
@@ -486,19 +487,19 @@ int main(int /*argc*/, char* /*argv*/[]) {
   {
     TimeBench bench{"Delete points in KDTree"};
     for (const auto& point : testPoints) {
-      std::cout << "=====\n";
-      std::cout << "Points in root:\n";
-      for (const auto& currentPoint : root->getAllPoints()) {
-        std::cout << currentPoint << '\n';
-      }
-      std::cout << "=====\n";
+      // std::cout << "=====\n";
+      // std::cout << "Points in root:\n";
+      // for (const auto& currentPoint : root->getAllPoints()) {
+      //   std::cout << currentPoint << '\n';
+      // }
+      // std::cout << "=====\n";
       const auto isPointDeleted = root->deletePoint(point);
       if (isPointDeleted) {
         pointsDeleted++;
       }
-      std::cout << "Delete point: " << point << " " << isPointDeleted
-                << "  root depth: " << root->getDepth() << '\n';
-      std::cout << "=====\n";
+      // std::cout << "Delete point: " << point << " " << isPointDeleted
+      //           << "  root depth: " << root->getDepth() << '\n';
+      // std::cout << "=====\n";
     }
   }
 
@@ -507,14 +508,14 @@ int main(int /*argc*/, char* /*argv*/[]) {
               << "  Deleted points: " << pointsDeleted << '\n';
   }
 
-  std::cout << "Root empty: " << root->isEmpty() << '\n';
+  // std::cout << "Root empty: " << root->isEmpty() << '\n';
 
-  std::cout << "=====\n";
-  std::cout << "Points in root:\n";
-  for (const auto& currentPoint : root->getAllPoints()) {
-    std::cout << currentPoint << '\n';
-  }
-  std::cout << "=====\n";
+  // std::cout << "=====\n";
+  // std::cout << "Points in root:\n";
+  // for (const auto& currentPoint : root->getAllPoints()) {
+  //   std::cout << currentPoint << '\n';
+  // }
+  // std::cout << "=====\n";
 
   std::cout << "Done.\n";
 
