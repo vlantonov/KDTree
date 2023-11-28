@@ -128,6 +128,11 @@ class Node {
 
     // Check if point is previously inserted
     if (aPoint == mPoint) {
+      if (mIsdeleted) {
+        std::cout << "Restore deleted point\n";
+        mIsdeleted = false;
+        return true;
+      }
       std::cout << "Point already exists!\n";
       return false;
     }
@@ -165,7 +170,7 @@ class Node {
     // std::cout << "Find " << aPoint << '\n';
 
     // Check if Node point found is close enough
-    if (mPoint == aPoint) {
+    if (mPoint == aPoint && !mIsdeleted) {
       // std::cout << "Found\n";
       return true;
     }
