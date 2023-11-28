@@ -249,39 +249,61 @@ class Node {
     return result;
   }
 
-  bool deletePoint(const Point& aPoint) {
-    // std::cout << "Delete " << aPoint << '\n';
+  bool deletePoint(const Point& aPoint, uint aDeleteDepth = 0) {
+    std::cout << "Delete " << aPoint << " at depth " << aDeleteDepth << '\n';
 
     // Check if Node point to delete is close enough
-    if (mPoint == aPoint) {
+    if (!mIsdeleted && mPoint == aPoint) {
       mIsdeleted = true;
       // Current node point value is invalid - update depth
       const auto largestDepth = std::max({getDepth(mLeft), getDepth(mRight)});
       mDepth = largestDepth;
 
-      // std::cout << (mDepth ? "Deleted current node"
-      //                      : "Current node invalidated")
-      //           << '\n';
+      std::cout << (mDepth ? "Deleted current node"
+                           : "Current node invalidated")
+                << '\n';
 
-      // if (mTopRight && !mBottomRight && !mTopLeft && !mBottomLeft) {
-      //   // std::cout << "Replace with TopRight node\n";
+      if (mLeft && !mRight) {
+        std::cout << "Replace with Left node\n";
+        mRight = std::move(mLeft->mRight);
 
-      //   mBottomRight = std::move(mTopRight->mBottomRight);
-      //   mTopLeft = std::move(mTopRight->mTopLeft);
-      //   mBottomLeft = std::move(mTopRight->mBottomLeft);
+        mPoint = mLeft->mPoint;
+        mDepth = mLeft->mDepth;
+        mLeft = std::move(mLeft->mLeft);
+        mIsdeleted = false;
+        return true;
+      }
 
-      //   mPoint = mTopRight->mPoint;
-      //   mDepth = mTopRight->mDepth;
-      //   mTopRight = std::move(mTopRight->mTopRight);
-      //   return true;
-      // }
+      if (!mLeft && mRight) {
+        std::cout << "Replace with Right node\n";
+        mLeft = std::move(mRight->mLeft);
+
+        mPoint = mRight->mPoint;
+        mDepth = mRight->mDepth;
+        mRight = std::move(mRight->mRight);
+        mIsdeleted = false;
+        return true;
+      }
 
       return true;
     }
 
     // Delete in children
+    uint aCurrentDimension = aDeleteDepth % 2;
 
-    // std::cout << "Point " << aPoint << " not deleted\n";
+    if (aPoint[aCurrentDimension] < mPoint[aCurrentDimension]) {
+      std::cout << "Delete Left\n";
+      if (mLeft) {
+        return mLeft->deletePoint(aPoint, aDeleteDepth + 1);
+      }
+    } else {
+      std::cout << "Delete Right\n";
+      if (mRight) {
+        return mRight->deletePoint(aPoint, aDeleteDepth + 1);
+      }
+    }
+
+    std::cout << "Point " << aPoint << " not deleted\n";
     return false;
   }
 
@@ -461,14 +483,14 @@ int main(int /*argc*/, char* /*argv*/[]) {
       // for (const auto& currentPoint : root->getAllPoints()) {
       //   std::cout << currentPoint << '\n';
       // }
-      // std::cout << "=====\n";
+      std::cout << "=====\n";
       const auto isPointDeleted = root->deletePoint(point);
       if (isPointDeleted) {
         pointsDeleted++;
       }
-      // std::cout << "Delete point: " << point << " " << isPointDeleted
-      //           << "  root depth: " << root->getDepth() << '\n';
-      // std::cout << "=====\n";
+      std::cout << "Delete point: " << point << " " << isPointDeleted
+                << "  root depth: " << root->getDepth() << '\n';
+      std::cout << "=====\n";
     }
   }
 
