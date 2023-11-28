@@ -263,28 +263,6 @@ class Node {
                            : "Current node invalidated")
                 << '\n';
 
-      if (mLeft && !mRight) {
-        std::cout << "Replace with Left node\n";
-        mRight = std::move(mLeft->mRight);
-
-        mPoint = mLeft->mPoint;
-        mDepth = mLeft->mDepth;
-        mLeft = std::move(mLeft->mLeft);
-        mIsdeleted = false;
-        return true;
-      }
-
-      if (!mLeft && mRight) {
-        std::cout << "Replace with Right node\n";
-        mLeft = std::move(mRight->mLeft);
-
-        mPoint = mRight->mPoint;
-        mDepth = mRight->mDepth;
-        mRight = std::move(mRight->mRight);
-        mIsdeleted = false;
-        return true;
-      }
-
       return true;
     }
 
