@@ -102,6 +102,30 @@ struct Rectangle {
 
   [[nodiscard]] float Ymax() const { return mYmax; }
 
+  float Max(uint aCurrentDimension) const {
+    switch (aCurrentDimension % 2) {
+      case 0:
+        return mXmax;
+        break;
+      case 1:
+        return mYmax;
+        break;
+    }
+    return NAN;
+  }
+
+  float Min(uint aCurrentDimension) const {
+    switch (aCurrentDimension % 2) {
+      case 0:
+        return mXmin;
+        break;
+      case 1:
+        return mYmin;
+        break;
+    }
+    return NAN;
+  }
+
  private:
   // Borders
   float mXmax;
@@ -166,18 +190,31 @@ class Node {
     return isInserted;
   }
 
-  bool findPoint(const Point& aPoint) {
-    // std::cout << "Find " << aPoint << '\n';
+  bool findPoint(const Point& aPoint, uint aSearchDepth = 0) {
+    std::cout << "Find " << aPoint << " at depth " << aSearchDepth << '\n';
 
     // Check if Node point found is close enough
     if (mPoint == aPoint && !mIsdeleted) {
-      // std::cout << "Found\n";
+      std::cout << "Found\n";
       return true;
     }
 
     // Search children
+    uint aCurrentDimension = aSearchDepth % 2;
 
-    // std::cout << "Not Found\n";
+    if (aPoint[aCurrentDimension] < mPoint[aCurrentDimension]) {
+      std::cout << "Find Left\n";
+      if (mLeft) {
+        return mLeft->findPoint(aPoint, aSearchDepth + 1);
+      }
+    } else {
+      std::cout << "Find Right\n";
+      if (mRight) {
+        return mRight->findPoint(aPoint, aSearchDepth + 1);
+      }
+    }
+
+    std::cout << "Not Found\n";
     return false;
   }
 
