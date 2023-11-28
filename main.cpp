@@ -309,11 +309,27 @@ class Node {
 
   [[nodiscard]] Point getPoint() const { return mPoint; }
 
-  [[nodiscard]] std::list<Point> getAllPoints() const {
+  [[nodiscard]] std::list<Point> getAllPoints(uint aSearchDepth = 0) const {
     std::list<Point> points;
 
     if (!mIsdeleted) {
       points.push_back(mPoint);
+    }
+
+    // Search children
+    uint aCurrentDimension = aSearchDepth % 2;
+
+    // TODO: Parallelization point
+    if (mLeft) {
+      std::cout << "Search Area Left\n";
+      auto&& pointsFound = mLeft->getAllPoints(aSearchDepth + 1);
+      points.splice(std::end(points), pointsFound);
+    }
+
+    if (mRight) {
+      std::cout << "Search Area Right\n";
+      auto&& pointsFound = mRight->getAllPoints(aSearchDepth + 1);
+      points.splice(std::end(points), pointsFound);
     }
 
     return points;
@@ -478,11 +494,11 @@ int main(int /*argc*/, char* /*argv*/[]) {
   {
     TimeBench bench{"Delete points in KDTree"};
     for (const auto& point : testPoints) {
-      // std::cout << "=====\n";
-      // std::cout << "Points in root:\n";
-      // for (const auto& currentPoint : root->getAllPoints()) {
-      //   std::cout << currentPoint << '\n';
-      // }
+      std::cout << "=====\n";
+      std::cout << "Points in root:\n";
+      for (const auto& currentPoint : root->getAllPoints()) {
+        std::cout << currentPoint << '\n';
+      }
       std::cout << "=====\n";
       const auto isPointDeleted = root->deletePoint(point);
       if (isPointDeleted) {
@@ -499,14 +515,14 @@ int main(int /*argc*/, char* /*argv*/[]) {
               << "  Deleted points: " << pointsDeleted << '\n';
   }
 
-  // std::cout << "Root empty: " << root->isEmpty() << '\n';
+  std::cout << "Root empty: " << root->isEmpty() << '\n';
 
-  // std::cout << "=====\n";
-  // std::cout << "Points in root:\n";
-  // for (const auto& currentPoint : root->getAllPoints()) {
-  //   std::cout << currentPoint << '\n';
-  // }
-  // std::cout << "=====\n";
+  std::cout << "=====\n";
+  std::cout << "Points in root:\n";
+  for (const auto& currentPoint : root->getAllPoints()) {
+    std::cout << currentPoint << '\n';
+  }
+  std::cout << "=====\n";
 
   std::cout << "Done.\n";
 
