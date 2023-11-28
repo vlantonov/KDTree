@@ -294,12 +294,26 @@ class Node {
     if (aPoint[aCurrentDimension] < mPoint[aCurrentDimension]) {
       std::cout << "Delete Left\n";
       if (mLeft) {
-        return mLeft->deletePoint(aPoint, aDeleteDepth + 1);
+        const auto isDeleted = mLeft->deletePoint(aPoint, aDeleteDepth + 1);
+        if (mLeft->isEmpty()) {
+          mLeft.reset();
+        }
+        if (isDeleted) {
+          updateDepth();
+        }
+        return isDeleted;
       }
     } else {
       std::cout << "Delete Right\n";
       if (mRight) {
-        return mRight->deletePoint(aPoint, aDeleteDepth + 1);
+        const auto isDeleted = mRight->deletePoint(aPoint, aDeleteDepth + 1);
+        if (mRight->isEmpty()) {
+          mRight.reset();
+        }
+        if (isDeleted) {
+          updateDepth();
+        }
+        return isDeleted;
       }
     }
 
