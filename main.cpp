@@ -432,13 +432,13 @@ int main(int /*argc*/, char* /*argv*/[]) {
   {
     TimeBench bench{"Find points in KDTree"};
     for (const auto& point : testPoints) {
-      // std::cout << "=====\n";
+      std::cout << "=====\n";
       const auto isPointFound = root->findPoint(point);
-      // std::cout << "Find point: " << isPointFound << '\n';
+      std::cout << "Find point: " << isPointFound << '\n';
       if (isPointFound) {
         pointsFound++;
       }
-      // std::cout << "=====\n";
+      std::cout << "=====\n";
     }
   }
   if (pointsFound != testPoints.size()) {
