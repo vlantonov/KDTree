@@ -31,10 +31,10 @@ class TimeBench {
   ~TimeBench() {
     const auto endPoint = std::chrono::high_resolution_clock::now();
     const auto processTime =
-        std::chrono::duration_cast<std::chrono::milliseconds>(endPoint -
+        std::chrono::duration_cast<std::chrono::microseconds>(endPoint -
                                                               mStartPoint)
             .count();
-    std::cout << mLabel << " : " << processTime << " milliseconds\n";
+    std::cout << mLabel << " : " << processTime << " microseconds\n";
   }
 
  private:
